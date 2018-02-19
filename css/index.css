@@ -1,0 +1,61 @@
+html {
+    height: 100%;
+}
+
+body{
+	margin-top: 0px;
+	background-color: lightgrey;
+	transition: background 0.5s ease;
+	height: 100%;
+}
+
+header{
+	padding: 1%;
+}
+
+.logo{
+	height: 64px;
+}
+
+.container{
+	text-align: center;
+	box-sizing: border-box;
+	padding: 0px;
+	position: absolute;
+	top: 40%;
+	left: 0px;
+	right: 0px;
+}
+
+
+#color{
+	font-family: 'Advent Pro';
+	font-size: 4.5em;
+	padding: 0;
+	margin: auto;
+	cursor: copy;
+	width: 20rem;
+}
+
+footer{
+	text-align: right;
+	font-size: 0.8em;
+	color: white;
+    margin: 20px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+footer a{
+	color: white;
+}
+
+footer a:visited{
+	color: white;
+}
+
+footer a:hover{
+	color: #534C4E;
+}
