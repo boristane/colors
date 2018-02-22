@@ -13,10 +13,13 @@ document.addEventListener("DOMContentLoaded", function(){
 		shades: document.querySelectorAll(".shade"),
 		shadesContainer: document.querySelector(".sub"),
 		shadesBtn: document.getElementById("shades-btn"),
-		copyTextArea: document.getElementById("copy-text-area")
+		copyTextArea: document.getElementById("copy-text-area"),
+		shadesVisible: false
 	};
-	
+
+
 	enter();
+	
 	
 	UI.footer.addEventListener("click", (e) => {
 		e.stopPropagation();
@@ -34,11 +37,16 @@ document.addEventListener("DOMContentLoaded", function(){
 	
 	UI.body.addEventListener("click", (e) => {
 		e.preventDefault();
-		UI.shadesContainer.style.display = "none";
-		currentColor = generateColor();
-		addColor(currentColor);
-		changeBackgroundColor(currentColor);
-		randomiseStringInDiv(UI.color);
+		if(UI.shadesVisible){
+			UI.shadesVisible = false;
+			fadeOut(UI.shadesContainer);
+		}else{
+			UI.shadesContainer.style.display = "none";
+			currentColor = generateColor();
+			addColor(currentColor);
+			changeBackgroundColor(currentColor);
+			randomiseStringInDiv(UI.color);
+		}
 	});
 	
 	UI.shadesBtn.addEventListener("click", (e) => {
@@ -46,10 +54,11 @@ document.addEventListener("DOMContentLoaded", function(){
 		e.stopPropagation();
 		applyColorShades();
 		fadeIn(UI.shadesContainer)
-
+		UI.shadesVisible = true;
 		for(let i = 0; i < UI.shades.length; i++){
 			let shade = UI.shades[i];
 			randomiseStringInDiv(shade);
+			shade.style.color = extractLuminance(shade.style.backgroundColor) > 0.7 ? "black" : "white"; 
 		}
 	});
 
@@ -105,6 +114,8 @@ document.addEventListener("DOMContentLoaded", function(){
 	function changeBackgroundColor(color){
 		UI.body.style.backgroundColor = color;
 		UI.color.textContent = color;
+		UI.color.style.color = extractLuminance(UI.body.style.backgroundColor) > 0.7 ? "black" : "white";
+		UI.shadesBtn.style.color = extractLuminance(UI.body.style.backgroundColor) > 0.7 ? "black" : "white";
 		if(colorCount >= 2){
 			UI.previous.style.color = "white";
 			UI.previous.style.cursor = "pointer";
@@ -201,6 +212,16 @@ function colorLuminance(hex, lumFactor){
 	return rgb;
 }
 
+function extractLuminance(rgb){
+	rgb = rgb.substr(4);
+	rgb = rgb.slice(0, rgb.length-1);
+	let colors = rgb.split(",").map((val) => parseInt(val));
+	let lum = colors.map((val) => val/255);
+	return lum.reduce((acc, val) => {
+		return acc+val;
+	})/lum.length;
+}
+
 function clamp(num, min, max){
 	return num < min ? min : num > max ? max : num;
 }
@@ -215,6 +236,22 @@ function fadeIn(div){
 		if(opacity >= 1) clearInterval(id);
 		else{
 			opacity += 0.1;
+			div.style.opacity = opacity.toString();
+		}
+	}
+}
+
+function fadeOut(div){
+	var opacity = 1;
+	div.style.opacity = opacity.toString();
+	var id = setInterval(foo, 100);
+	setTimeout(() => {
+		div.style.display = "none";
+	},1000)
+	function foo(){
+		if(opacity <= 0) clearInterval(id);
+		else{
+			opacity -= 0.1;
 			div.style.opacity = opacity.toString();
 		}
 	}
