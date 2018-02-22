@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		logo: document.querySelector(".logo"),
 		shades: document.querySelectorAll(".shade"),
 		shadesContainer: document.querySelector(".sub"),
-		shadesBtn: document.getElementById("shades-btn")
+		shadesBtn: document.getElementById("shades-btn"),
+		copyTextArea: document.getElementById("copy-text-area")
 	};
 	
 	enter();
@@ -62,13 +63,19 @@ document.addEventListener("DOMContentLoaded", function(){
 			e.stopPropagation();
 			shade.style.fontSize = "2.0em";
 		});
+		shade.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			popOut(shade, "2.1em", "2.3em", 0.1);
+			copyDivToClipboard(shade);
+		});
 	}
 
 	UI.color.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		popSpanOut(UI.color, "4.5em", "4.7em", 0.1);
-		// TODO : Copy to clipboard
+		popOut(UI.color, "4.5em", "4.7em", 0.1);
+		copyDivToClipboard(UI.color);
 	});
 	
 	UI.previous.addEventListener("click", (e) => {
@@ -80,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function(){
 			currentColor = colors[colorCount - 1];
 			changeBackgroundColor(currentColor);
 			randomiseStringInDiv(UI.color);
-			popSpanOut(UI.previous, "2.8em", "3.0em", 0.1);
+			popOut(UI.previous, "2.8em", "3.0em", 0.1);
 		}
 	});
 	
@@ -107,11 +114,17 @@ document.addEventListener("DOMContentLoaded", function(){
 		}
 	}
 	
-	function popSpanOut(span, initial, end, time){
+	function popOut(span, initial, end, time){
 		span.style.fontSize = end;
 		setTimeout(() =>{
 			span.style.fontSize = initial;
 		}, time*1000);
+	}
+
+	function copyDivToClipboard(div){
+		UI.copyTextArea.value = div.textContent;
+		UI.copyTextArea.select();
+		document.execCommand("Copy");
 	}
 	
 	
@@ -141,9 +154,7 @@ function removeLastColor(){
 	colorCount = colors.length;
 }
 
-function copyDivToClipboard(){
-	// TODO
-}
+
 
 function randomiseStringInDiv(div){
 	const chars = ["$", "%", "#", "@", "&", "(", ")", ",", "=", "*", "/"];
@@ -185,7 +196,7 @@ function colorLuminance(hex, lumFactor){
 	for(let i = 0; i<3; i++){
 		let color = parseInt(hex.substr(i*2,2),16);
 		color = Math.round(clamp(color*(1+lumFactor), 0, 255)).toString(16);
-		rgb += ("00"+color).substr(color.length);
+		rgb += ("00"+color).substr(color.length).toUpperCase();
 	}
 	return rgb;
 }
