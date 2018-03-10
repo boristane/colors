@@ -3,7 +3,7 @@ html {
 }
 
 body{
-	margin-top: 0px;
+	margin: 0px;
 	background-color: lightgrey;
 	transition: background 1.2s ease;
 	height: 90%;
@@ -95,7 +95,7 @@ input{
 	font-family: 'Advent Pro';
 	color: white;
 	font-size: 2.0em;
-	width: 90%;
+	width: 100%;
 	position: absolute;
 	bottom: 0;
 	padding-bottom: 100px;
@@ -124,4 +124,26 @@ footer a:visited{
 
 footer a:hover{
 	color: lightgray;
+}
+
+@media screen and (max-width: 600px){
+	.container{
+		top: 20%;
+	}
+
+	#color{
+		font-size: 2.5em;
+	}
+
+	.type{
+		font-size: 1.8em;
+	}
+
+	#shades-btn{
+		display: none;
+	}
+
+	.sub{
+		display: none;
+	}
 }
