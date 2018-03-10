@@ -78,6 +78,7 @@ header{
 	bottom: 0;
 	padding: 40px;
 	padding-bottom: 20px;
+	z-index: 5;
 }
 
 input{
@@ -88,6 +89,18 @@ input{
 #previous-btn{
 	transition: font-size 0.1s ease;
 	font-size: 2.8em;
+}
+
+.type{
+	font-family: 'Advent Pro';
+	color: white;
+	font-size: 2.0em;
+	width: 90%;
+	position: absolute;
+	bottom: 0;
+	padding-bottom: 100px;
+	text-align: center;
+	cursor: pointer;
 }
 
 footer{

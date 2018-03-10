@@ -1,6 +1,8 @@
 let colors = [];
+let shadeColors = [];
 let currentColor = "";
 let colorCount = 0;
+let rgb = false;
 
 document.addEventListener("DOMContentLoaded", function(){
 	
@@ -14,7 +16,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		shadesContainer: document.querySelector(".sub"),
 		shadesBtn: document.getElementById("shades-btn"),
 		copyTextArea: document.getElementById("copy-text-area"),
-		shadesVisible: false
+		shadesVisible: false,
+		typeBtn: document.getElementById("type-btn")
 	};
 
 
@@ -43,6 +46,9 @@ document.addEventListener("DOMContentLoaded", function(){
 		}else{
 			UI.shadesContainer.style.display = "none";
 			currentColor = generateColor();
+			if(rgb){
+				currentColor = hexToRgb(currentColor);
+			}
 			addColor(currentColor);
 			changeBackgroundColor(currentColor);
 			randomiseStringInDiv(UI.color);
@@ -99,23 +105,57 @@ document.addEventListener("DOMContentLoaded", function(){
 			popOut(UI.previous, "2.8em", "3.0em", 0.1);
 		}
 	});
+
+	UI.typeBtn.addEventListener("click", (e)=>{
+		e.preventDefault();
+		e.stopPropagation();
+		if(rgb){
+			UI.typeBtn.textContent = "RGB";
+			colors = colors.map(color => {
+				return rgbToHex(color);
+			});
+		}else{
+			UI.typeBtn.textContent = "HEX";
+			colors = colors.map(color => {
+				return hexToRgb(color);
+			});
+		}
+		currentColor = colors[colors.length-1];
+		changeBackgroundColor(currentColor);
+		randomiseStringInDiv(UI.color);
+
+		if(UI.shadesVisible){
+			for(var i = 0; i < UI.shades.length; i++){
+				let shade = UI.shades[i];
+				shade.textContent = rgb ? shadeColors[i] : hexToRgb(shadeColors[i]);
+				randomiseStringInDiv(shade);
+			}
+		}
+		rgb = !rgb;
+	})
 	
 	function applyColorShades(){
 		let lumFactor = -0.9;
+		currentColor = rgb ? rgbToHex(currentColor) : currentColor;
 		for(let i = 0; i < UI.shades.length; i++){
 			let shade = UI.shades[i];
 			let shadeColor = colorLuminance(currentColor, lumFactor);
 			shade.style.backgroundColor = shadeColor;
-			shade.textContent = shadeColor;
+			shadeColors.push(shadeColor);
+			shade.textContent = rgb ? hexToRgb(shadeColor) : shadeColor;
 			lumFactor += 0.1;
 		}
 	}
 
 	function changeBackgroundColor(color){
 		UI.body.style.backgroundColor = color;
+		if(rgb){
+			UI.body.style.backgroundColor = "rgb" + color;
+		}
 		UI.color.textContent = color;
 		UI.color.style.color = extractLuminance(UI.body.style.backgroundColor) > 0.7 ? "black" : "white";
 		UI.shadesBtn.style.color = extractLuminance(UI.body.style.backgroundColor) > 0.7 ? "black" : "white";
+		UI.typeBtn.style.color =  extractLuminance(UI.body.style.backgroundColor) > 0.7 ? "black" : "white";
 		if(colorCount >= 2){
 			UI.previous.style.color = "white";
 			UI.previous.style.cursor = "pointer";
@@ -141,8 +181,6 @@ document.addEventListener("DOMContentLoaded", function(){
 	
 });
 
-// TODO : Implement copy on click
-
 function generateColor(){
 	let hexLetters = [..."0123456789ABCDEF"];
 	let color = "#";
@@ -164,8 +202,6 @@ function removeLastColor(){
 	colors.pop();
 	colorCount = colors.length;
 }
-
-
 
 function randomiseStringInDiv(div){
 	const chars = ["$", "%", "#", "@", "&", "(", ")", ",", "=", "*", "/"];
@@ -200,6 +236,30 @@ function randomiseStringInDiv(div){
 		},letters.length*randomisingTime + letters.length*randomisingTime2 + index*randomisingTime3);
 	});
 }
+
+function hexToRgb(hex){
+	hex = hex.substr(1);
+	var result = "(";
+	var temp = result;
+	for(var i = 0; i < 3; i++){
+		var color = parseInt(hex.substr(i*2,2),16);
+		temp += color + ",";
+	}
+	result = temp.substring(0, temp.length-1) + ")";
+	return result;
+}
+
+
+function rgbToHex(rgb){
+	var colors = rgb.substring(1, rgb.length-1).split(",");
+	var result = "#";
+	colors.forEach(color => {
+		color = parseInt(color, 10).toString(16);
+		result += color.length === 1 ? 0+color : color;
+	});
+	return result.toUpperCase();
+}
+
 
 function colorLuminance(hex, lumFactor){
 	hex = hex.substr(1);
